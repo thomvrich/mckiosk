@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iAdvise - Check-in</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <img src="https://iadvise.ou.edu/images/logo.png" alt="iAdvise Logo">
+    </div>
+
+    <div class="container">
+        <!-- Initial Screen - ID Entry -->
+        <div id="screenId" class="screen active">
+            <div class="header">Welcome to the Math Center!</div>
+            <div class="content">
+                <!-- Success Modal -->
+                <div id="modalSuccess" class="modal">
+                    <h5>Check-in Successful</h5>
+                    <p id="successMessage"></p>
+                </div>
+
+                <!-- Error Modal -->
+                <div id="modalError" class="modal error">
+                    <h5>Invalid Sooner ID</h5>
+                    <p>Sorry, your Sooner ID is not valid. Please try again.</p>
+                </div>
+
+                <!-- Missing Info Modal -->
+                <div id="modalMissingInfo" class="modal error">
+                    <h5>Missing Information</h5>
+                    <p id="missingInfoMessage"></p>
+                </div>
+
+                <!-- Custom Message -->
+                <div id="customMessageDisplay" class="custom-message"></div>
+
+                <!-- Hours Display -->
+                <div id="hoursDisplay" class="hours-display"></div>
+
+                <p class="info-text">Please enter your Sooner ID to begin...</p>
+                <div class="form-group">
+                    <input type="number" id="soonerId" placeholder="Sooner ID" min="0" pattern="[0-9]*" inputmode="numeric">
+                    <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">Enter your 9-digit Sooner ID.</small>
+                </div>
+                <div class="button-container">
+                    <button class="btn btn-primary" onclick="validateId()">Check In or Check Out</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2 - Course Selection -->
+        <div id="screenCourse" class="screen">
+            <div class="header">Check-in</div>
+            <div class="content">
+                <p class="info-text">Great! What specifically can we help you with?</p>
+                <div class="form-group">
+                    <label>Which course are you seeking tutoring for?</label>
+                    <div class="course-list">
+                        <div class="course-item course-orange" data-value="MATH 1005">MATH 1005 - Mathematical Reasoning (Orange Room)</div>
+                        <div class="course-item course-orange" data-value="MATH 1473">MATH 1473 - Mathematics for Critical Thinking (Orange Room)</div>
+                        <div class="course-item course-yellow" data-value="MATH 1503">MATH 1503 - College Algebra (Yellow Room)</div>
+                        <div class="course-item course-yellow" data-value="MATH 1523">MATH 1523 - Pre-Calculus and Analytical Geometry (Yellow Room)</div>
+                        <div class="course-item course-green" data-value="MATH 1643">MATH 1643 - Functions and Modeling (Green Room)</div>
+                        <div class="course-item course-green" data-value="MATH 1743">MATH 1743 - Calculus I for Business, Life and Social Sciences (Green Room)</div>
+                        <div class="course-item course-blue" data-value="MATH 1823">MATH 1823 - Calculus and Analytical Geometry I (Blue Room)</div>
+                        <div class="course-item course-blue" data-value="MATH 1914">MATH 1914 - Differential and Integral Calculus I (Blue Room)</div>
+                        <div class="course-item course-orange" data-value="MATH 2213">MATH 2213 - Mathematical Systems (Orange Room)</div>
+                        <div class="course-item course-orange" data-value="MATH 2223">MATH 2223 - Data Analysis and Geometric Systems (Orange Room)</div>
+                        <div class="course-item course-blue" data-value="MATH 2423">MATH 2423 - Calculus and Analytical Geometry II (Blue Room)</div>
+                        <div class="course-item course-red" data-value="MATH 2433">MATH 2433 - Calculus and Analytical Geometry III (Red Room)</div>
+                        <div class="course-item course-red" data-value="MATH 2443">MATH 2443 - Calculus and Analytical Geometry IV (Red Room)</div>
+                        <div class="course-item course-red" data-value="MATH 2924">MATH 2924 - Differential and Integral Calculus II (Red Room)</div>
+                        <div class="course-item course-red" data-value="MATH 2934">MATH 2934 - Differential and Integral Calculus III (Red Room)</div>
+                        <div class="course-item course-purple" data-value="MATH 3113">MATH 3113 - Introduction to Ordinary Differential Equations (Purple Room)</div>
+                        <div class="course-item course-purple" data-value="MATH 3333">MATH 3333 - Linear Algebra I (Purple Room)</div>
+                        <div class="course-item course-purple" data-value="MATH 3413">MATH 3413 - Physical Mathematics I (Purple Room)</div>
+                        <div class="course-item" data-value="FRONT_DESK">Math Department - Front Desk</div>
+                        <div class="course-item" data-value="OTHER">Other</div>
+                        <div class="course-item" data-value="STAFF">Math Center Staff</div>
+                    </div>
+                    <input type="hidden" id="course">
+                </div>
+                <div class="button-container">
+                    <button class="btn btn-secondary" onclick="goToScreen('screenId')">Cancel</button>
+                    <button class="btn btn-primary" onclick="checkIn()">Check In</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3 - Advanced Settings -->
+        <div id="screenSettings" class="screen">
+            <div class="header">Advanced Settings</div>
+            <div class="content">
+                <div class="settings-group">
+                    <h3>Custom Message</h3>
+                    <label>Display a custom message on the check-in page:</label>
+                    <textarea id="customMessage" placeholder="Enter a custom message (e.g., Happy Holidays! or Good luck with finals!)"></textarea>
+                    <button class="btn btn-primary" onclick="saveCustomMessage()">Save Message</button>
+                    <button class="btn btn-secondary" onclick="clearCustomMessage()">Clear Message</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Hours Display</h3>
+                    <label>Toggle display of today's hours:</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" onclick="toggleHours(true)">Show Hours</button>
+                        <button class="toggle-btn" onclick="toggleHours(false)">Hide Hours</button>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>Edit Hours by Day:</label>
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Monday:</label>
+                                <input type="text" id="hoursMon" placeholder="e.g., 9:00 AM - 6:00 PM" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Tuesday:</label>
+                                <input type="text" id="hoursTue" placeholder="e.g., 9:00 AM - 6:00 PM" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Wednesday:</label>
+                                <input type="text" id="hoursWed" placeholder="e.g., 9:00 AM - 6:00 PM" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Thursday:</label>
+                                <input type="text" id="hoursThu" placeholder="e.g., 9:00 AM - 6:00 PM" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Friday:</label>
+                                <input type="text" id="hoursFri" placeholder="e.g., 9:00 AM - 3:00 PM" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Saturday:</label>
+                                <input type="text" id="hoursSat" placeholder="e.g., Closed" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-weight: normal;">Sunday:</label>
+                                <input type="text" id="hoursSun" placeholder="e.g., Closed" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveHours()">Save Hours</button>
+                            <button class="btn btn-secondary" onclick="resetHoursToDefault()">Reset to Default</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Snow Effect</h3>
+                    <label>Toggle festive snow animation (Winter/Holidays):</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn" onclick="toggleSnow(true)">Enable</button>
+                        <button class="toggle-btn active" onclick="toggleSnow(false)">Disable</button>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Database Query</h3>
+                    <label>View check-in/out records:</label>
+                    <button class="btn btn-primary" onclick="showAllRecords()">View All Records</button>
+                    <button class="btn btn-primary" onclick="showCurrentlyCheckedIn()">Currently Checked In</button>
+                    <button class="btn btn-secondary" onclick="clearDatabase()">Clear All Records</button>
+                    
+                    <div id="queryResults" style="margin-top: 20px; max-height: 300px; overflow-y: auto; background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; display: none;">
+                        <h4 style="margin-bottom: 10px;">Query Results:</h4>
+                        <div id="queryContent"></div>
+                    </div>
+                </div>
+
+                <div class="button-container" style="margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="goToScreen('screenId')">Back to Check-in</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
